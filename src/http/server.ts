@@ -1,7 +1,12 @@
 import fastify from "fastify";
+import { userRoutes } from "./routes/user/user.routes";
 
 const app = fastify({
   logger: true,
+});
+
+app.register(userRoutes, {
+  prefix: "/users",
 });
 
 app.get("/", () => {
