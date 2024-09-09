@@ -1,0 +1,15 @@
+POST http://localhost:3333/users
+Content-Type: application/json
+
+{
+  "name": "Jonh",
+  "email": "john@example3.com",
+  "bio": "",
+  "roles": [],
+  "instruments": [],
+  "avatarUrl": "https://gravatar.com/avatar/0f52471d587006f5106698e4a34052bc?s=400&d=robohash&r=x"
+}
+
+
+### Buscar usuário
+GET http://localhost:3333/users/john@example.com
