@@ -19,7 +19,7 @@ export async function userRoutes(fastify: FastifyInstance) {
 
     const userCreated = await aService.create(name, email, avatarUrl);
 
-    reply.status(201).send({ user: userCreated?.props });
+    return reply.status(201).send({ user: userCreated?.props });
   });
 
   fastify.get<{ Params: FindUserDTO }>("/:email", async (req, reply) => {
@@ -31,10 +31,10 @@ export async function userRoutes(fastify: FastifyInstance) {
     const result = await aService.find(email);
 
     if (!result) {
-      reply.status(404).send({ message: "Usuário não existe." });
+      return reply.status(404).send({ message: "Usuário não existe." });
     }
 
-    reply.status(200).send({
+    return reply.status(200).send({
       user: result?.props,
     });
   });
