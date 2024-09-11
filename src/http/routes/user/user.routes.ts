@@ -14,7 +14,7 @@ export async function userRoutes(fastify: FastifyInstance) {
     const userAlreadyExists = await aService.find(email);
 
     if (userAlreadyExists) {
-      return reply.code(409).send({ message: "Usuário já existe" });
+      return reply.code(400).send({ message: "Usuário já existe" });
     }
 
     const userCreated = await aService.create(name, email, avatarUrl);
