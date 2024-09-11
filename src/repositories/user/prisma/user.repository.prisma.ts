@@ -10,20 +10,18 @@ export class UserRepositoryPrisma implements UserRepository {
   }
 
   async save(user: User): Promise<User | null> {
-    const data = {
-      name: user.name,
-      email: user.email,
-      avatarUrl: user.avatarUrl,
-    };
-
     const result = await this.prisma.user.create({
-      data,
+      data: {
+        name: user.name,
+        email: user.email,
+        avatarUrl: user.avatarUrl,
+        bio: "",
+      },
     });
 
     if (result) {
       return User.with({
         ...result,
-        bio: result.bio || "",
       });
     }
 
@@ -35,15 +33,14 @@ export class UserRepositoryPrisma implements UserRepository {
   }
 
   async find(email: string): Promise<User | null> {
-    const result = await this.prisma.user.findFirst({ where: { email } });
+    const user = await this.prisma.user.findFirst({ where: { email } });
 
-    if (result) {
+    if (user) {
       return User.with({
-        ...result,
-        bio: result.bio || "",
+        ...user,
       });
     }
 
-    return result;
+    return user;
   }
 }
