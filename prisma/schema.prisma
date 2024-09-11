@@ -18,7 +18,7 @@ model User {
   name        String
   email       String     @unique
   createdAt   DateTime   @default(now())
-  bio         String?
+  bio         String
   roles       String[]
   instruments String[]
   avatarUrl   String
@@ -35,7 +35,7 @@ model Sheet {
   title      String
   songWriter String
   pdfUrl     String
-  mp3Url     String?
+  mp3Url     String
   badges     String[]
   userId     String
   user       User       @relation(fields: [userId], references: [id])
