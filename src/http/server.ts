@@ -1,12 +1,18 @@
 import fastify from "fastify";
 import { userRoutes } from "./routes/user/user.routes";
+import { authRoutes } from "./routes/auth/auth.routes";
+import { isAuthenticated } from "./routes/auth/isAuthenticated";
 
 const app = fastify({
-  logger: true,
+  // logger: true,
 });
 
 app.register(userRoutes, {
   prefix: "/users",
+});
+
+app.register(authRoutes, {
+  prefix: "/auth",
 });
 
 app.get("/", () => {
