@@ -4,6 +4,12 @@ export type CreateUserDTO = {
   avatarUrl: string;
 };
 
+export type UpdateUserDTO = {
+  roles: string[];
+  instruments: string[];
+  bio: string;
+};
+
 export type FindUserDTO = {
   email: string;
 };
