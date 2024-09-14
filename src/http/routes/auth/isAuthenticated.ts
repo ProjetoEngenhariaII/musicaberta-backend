@@ -6,8 +6,7 @@ export async function isAuthenticated(
   reply: FastifyReply
 ) {
   const rawToken = req.headers.authorization;
-  const tokenParts = rawToken?.split("Bearer");
-  const token = tokenParts?.[1];
+  const token = rawToken?.replace("Bearer ", "");
 
   const payload = await verifyToken(token ?? "");
 
