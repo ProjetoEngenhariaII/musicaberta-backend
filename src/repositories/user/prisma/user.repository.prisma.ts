@@ -28,8 +28,25 @@ export class UserRepositoryPrisma implements UserRepository {
     return null;
   }
 
-  update(user: User): Promise<void> {
-    throw new Error("Method not implemented.");
+  async update(user: User): Promise<User | null> {
+    const result = await this.prisma.user.update({
+      data: {
+        roles: user.roles,
+        instruments: user.instruments,
+        bio: user.bio,
+      },
+      where: {
+        email: user.email,
+      },
+    });
+
+    if (result) {
+      return User.with({
+        ...result,
+      });
+    }
+
+    return null;
   }
 
   async find(email: string): Promise<User | null> {
