@@ -1,6 +1,6 @@
 export type UserProps = {
-  id: string;
-  createdAt: Date;
+  id: string | undefined;
+  createdAt: Date | undefined;
   name: string;
   email: string;
   bio: string;
@@ -14,8 +14,8 @@ export class User {
 
   public static build(name: string, email: string, avatarUrl: string) {
     return new User({
-      id: "",
-      createdAt: new Date(),
+      id: undefined,
+      createdAt: undefined,
       name,
       email,
       avatarUrl,
