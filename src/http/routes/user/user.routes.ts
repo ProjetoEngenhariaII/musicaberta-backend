@@ -26,9 +26,7 @@ export async function userRoutes(fastify: FastifyInstance) {
 
   fastify.patch<{ Body: UpdateUserDTO; Params: FindUserDTO }>(
     "/:email",
-    {
-      preHandler: isAuthenticated,
-    },
+    // { preHandler: isAuthenticated },
     async (req, reply) => {
       const { bio, instruments, roles } = req.body;
       const email = req.params.email;
@@ -62,7 +60,7 @@ export async function userRoutes(fastify: FastifyInstance) {
 
   fastify.get<{ Params: FindUserDTO }>(
     "/:email",
-    { preHandler: isAuthenticated },
+    // { preHandler: isAuthenticated },
     async (req, reply) => {
       const { email } = req.params;
 

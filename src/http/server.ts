@@ -7,12 +7,12 @@ const app = fastify({
   // logger: true,
 });
 
+// app.register(authRoutes, {
+//   prefix: "/auth",
+// });
+
 app.register(userRoutes, {
   prefix: "/users",
-});
-
-app.register(authRoutes, {
-  prefix: "/auth",
 });
 
 app.get("/", () => {
