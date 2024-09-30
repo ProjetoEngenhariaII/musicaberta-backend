@@ -6,3 +6,7 @@ export type CreateSheetDTO = {
   badges: string[];
   userId: string;
 };
+
+export type DeleteSheetDTO = {
+  id: string;
+};

@@ -30,4 +30,12 @@ export class SheetRepositoryPrisma implements SheetRepository {
 
     return null;
   }
+
+  async delete(sheetId: string): Promise<void> {
+    await this.prisma.sheet.delete({
+      where: {
+        id: sheetId,
+      },
+    });
+  }
 }

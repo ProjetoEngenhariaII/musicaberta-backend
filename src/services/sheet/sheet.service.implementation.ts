@@ -25,4 +25,8 @@ export class SheetServiceImplementation implements SheetService {
 
     return result;
   }
+
+  async delete(sheetId: string): Promise<void> {
+    await this.repository.delete(sheetId);
+  }
 }
