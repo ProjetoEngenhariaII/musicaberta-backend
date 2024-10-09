@@ -29,4 +29,26 @@ export class SheetServiceImplementation implements SheetService {
   async delete(sheetId: string): Promise<void> {
     await this.repository.delete(sheetId);
   }
+
+  async findAll(
+    search: string | undefined,
+    sort: "asc" | "desc",
+    skip: number,
+    perPage: number
+  ): Promise<{ sheets: Sheet[]; total: number }> {
+    const { sheets, total } = await this.repository.findAll(
+      search,
+      sort,
+      skip,
+      perPage
+    );
+
+    return { sheets, total };
+  }
+
+  async findByUser(userId: string): Promise<Sheet[]> {
+    const sheets = await this.repository.findByUser(userId);
+
+    return sheets;
+  }
 }

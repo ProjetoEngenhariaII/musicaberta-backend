@@ -4,6 +4,7 @@ import { Sheet } from "../../../entities/sheet.entity";
 
 export class SheetRepositoryPrisma implements SheetRepository {
   private constructor(readonly prisma: PrismaClient) {}
+
   public static build(prisma: PrismaClient) {
     return new SheetRepositoryPrisma(prisma);
   }
@@ -37,5 +38,60 @@ export class SheetRepositoryPrisma implements SheetRepository {
         id: sheetId,
       },
     });
+  }
+
+  async findAll(
+    search: string | undefined,
+    sort: "asc" | "desc",
+    skip: number,
+    perPage: number
+  ): Promise<{ sheets: Sheet[]; total: number }> {
+    const result = await this.prisma.sheet.findMany({
+      skip,
+      take: perPage,
+      where: {
+        OR: [
+          {
+            title: {
+              contains: search || "",
+              mode: "insensitive",
+            },
+          },
+
+          {
+            songWriter: {
+              contains: search || "",
+              mode: "insensitive",
+            },
+          },
+        ],
+      },
+      orderBy: [
+        {
+          createdAt: sort,
+        },
+      ],
+    });
+
+    const total = await this.prisma.sheet.count();
+
+    const sheets = result.map((sheet) => Sheet.with(sheet));
+
+    return { sheets, total };
+  }
+
+  async findByUser(userId: string): Promise<Sheet[]> {
+    const result = await this.prisma.sheet.findMany({
+      where: {
+        userId,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    const sheets = result.map((sheet) => Sheet.with(sheet));
+
+    return sheets;
   }
 }
