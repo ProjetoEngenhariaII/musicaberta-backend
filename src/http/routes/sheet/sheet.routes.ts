@@ -91,8 +91,6 @@ export async function sheetRoutes(fastify: FastifyInstance) {
 
     const fileURL = `https://qzlpaffxclrcwakxchow.supabase.co/storage/v1/object/public/sheets/${filename}`;
 
-    console.log(fileURL);
-
     return reply.status(200).send({ fileURL, message: "Upload succeeded" });
   });
 
