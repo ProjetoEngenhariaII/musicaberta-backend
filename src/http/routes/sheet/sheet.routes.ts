@@ -9,6 +9,9 @@ import { prisma } from "../../../database/prisma";
 import { SheetRepositoryPrisma } from "../../../repositories/sheet/prisma/sheet.repository.prisma";
 import { SheetServiceImplementation } from "../../../services/sheet/sheet.service.implementation";
 import { Sheet } from "../../../entities/sheet.entity";
+import { clientS3 } from "../../../utils/client.supabase";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { randomUUID } from "crypto";
 
 export async function sheetRoutes(fastify: FastifyInstance) {
   fastify.post<{ Body: CreateSheetDTO }>("/", async (req, reply) => {
@@ -66,6 +69,31 @@ export async function sheetRoutes(fastify: FastifyInstance) {
       data: sheetsFormatted,
       meta,
     });
+  });
+
+  fastify.post("/upload", async (req, reply) => {
+    const data = await req.file();
+
+    if (!data) {
+      return reply.status(400);
+    }
+
+    const filename = randomUUID();
+
+    const putObjectCommand = new PutObjectCommand({
+      Bucket: "sheets",
+      Key: filename,
+      Body: await data.toBuffer(),
+      ContentType: data.mimetype,
+    });
+
+    await clientS3.send(putObjectCommand);
+
+    const fileURL = `https://qzlpaffxclrcwakxchow.supabase.co/storage/v1/object/public/sheets/${filename}`;
+
+    console.log(fileURL);
+
+    return reply.status(200).send({ fileURL, message: "Upload succeeded" });
   });
 
   fastify.get<{ Params: GetSheetByUserIdDTO }>(

@@ -1,4 +1,6 @@
 import fastify from "fastify";
+import cors from "@fastify/cors";
+
 import { userRoutes } from "./routes/user/user.routes";
 import { sheetRoutes } from "./routes/sheet/sheet.routes";
 // import { authRoutes } from "./routes/auth/auth.routes";
@@ -7,6 +9,10 @@ import { sheetRoutes } from "./routes/sheet/sheet.routes";
 const app = fastify({
   // logger: true,
 });
+
+app.register(cors, {});
+
+app.register(require("@fastify/multipart"));
 
 // app.register(authRoutes, {
 //   prefix: "/auth",
