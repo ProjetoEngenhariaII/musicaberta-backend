@@ -10,7 +10,7 @@ import { SheetRepositoryPrisma } from "../../../repositories/sheet/prisma/sheet.
 import { SheetServiceImplementation } from "../../../services/sheet/sheet.service.implementation";
 import { Sheet } from "../../../entities/sheet.entity";
 import { clientS3 } from "../../../utils/client.supabase";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { randomUUID } from "crypto";
 
 export async function sheetRoutes(fastify: FastifyInstance) {
@@ -110,13 +110,20 @@ export async function sheetRoutes(fastify: FastifyInstance) {
     }
   );
 
-  fastify.delete<{ Params: DeleteSheetDTO }>("/:id", async (req, reply) => {
-    const { id } = req.params;
+  fastify.delete<{ Body: DeleteSheetDTO }>("/", async (req, reply) => {
+    const { id, key } = req.body;
 
     const aRepository = SheetRepositoryPrisma.build(prisma);
     const aService = SheetServiceImplementation.build(aRepository);
 
     await aService.delete(id);
+
+    const deleteObjectCommand = new DeleteObjectCommand({
+      Bucket: "sheets",
+      Key: key,
+    });
+
+    await clientS3.send(deleteObjectCommand);
 
     return reply.status(200).send({ message: "sheet deleted" });
   });

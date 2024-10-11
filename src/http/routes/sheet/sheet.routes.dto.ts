@@ -9,6 +9,7 @@ export type CreateSheetDTO = {
 
 export type DeleteSheetDTO = {
   id: string;
+  key: string;
 };
 
 export type GetSheetByUserIdDTO = {
