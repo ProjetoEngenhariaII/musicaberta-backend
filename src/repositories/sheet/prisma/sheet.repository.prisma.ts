@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 import { SheetRepository } from "../sheet.repository";
 import { Sheet } from "../../../entities/sheet.entity";
 
@@ -46,34 +46,36 @@ export class SheetRepositoryPrisma implements SheetRepository {
     skip: number,
     perPage: number
   ): Promise<{ sheets: Sheet[]; total: number }> {
+    const where: Prisma.SheetWhereInput = {
+      OR: [
+        {
+          title: {
+            contains: search || "",
+            mode: "insensitive",
+          },
+        },
+
+        {
+          songWriter: {
+            contains: search || "",
+            mode: "insensitive",
+          },
+        },
+      ],
+    };
+
+    const total = await this.prisma.sheet.count({ where });
+
     const result = await this.prisma.sheet.findMany({
       skip,
       take: perPage,
-      where: {
-        OR: [
-          {
-            title: {
-              contains: search || "",
-              mode: "insensitive",
-            },
-          },
-
-          {
-            songWriter: {
-              contains: search || "",
-              mode: "insensitive",
-            },
-          },
-        ],
-      },
+      where,
       orderBy: [
         {
           createdAt: sort,
         },
       ],
     });
-
-    const total = await this.prisma.sheet.count();
 
     const sheets = result.map((sheet) => Sheet.with(sheet));
 

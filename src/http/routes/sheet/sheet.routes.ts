@@ -55,13 +55,14 @@ export async function sheetRoutes(fastify: FastifyInstance) {
 
     const sheetsFormatted = sheets.map((sheet) => sheet.props);
 
-    const lastPage = Math.ceil(total / perPage);
+    const last = Math.ceil(total / perPage);
 
     const meta = {
       current: page,
       path: "/sheets",
       prev: page > 1 ? page - 1 : null,
-      next: page < lastPage ? page + 1 : null,
+      next: page < last ? page + 1 : null,
+      last,
       total,
     };
 
