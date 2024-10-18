@@ -40,7 +40,7 @@ export async function sheetRoutes(fastify: FastifyInstance) {
     const { search, sort } = req.query;
     const page = Number(req.query.page);
 
-    const perPage = 5;
+    const perPage = 6;
     const skip = (page - 1) * perPage;
 
     const aRepository = SheetRepositoryPrisma.build(prisma);
@@ -111,8 +111,8 @@ export async function sheetRoutes(fastify: FastifyInstance) {
     }
   );
 
-  fastify.delete<{ Body: DeleteSheetDTO }>("/", async (req, reply) => {
-    const { id, key } = req.body;
+  fastify.delete<{ Querystring: DeleteSheetDTO }>("/", async (req, reply) => {
+    const { id, key } = req.query;
 
     const aRepository = SheetRepositoryPrisma.build(prisma);
     const aService = SheetServiceImplementation.build(aRepository);
