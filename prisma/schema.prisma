@@ -53,5 +53,6 @@ model Favorite {
   user    User   @relation(fields: [userId], references: [id])
   sheet   Sheet  @relation(fields: [sheetId], references: [id])
 
+  @@unique([userId, sheetId])
   @@map("favorites")
 }
