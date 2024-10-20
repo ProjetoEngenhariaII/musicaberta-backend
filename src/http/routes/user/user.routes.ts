@@ -16,12 +16,10 @@ export async function userRoutes(fastify: FastifyInstance) {
     const userAlreadyExists = await aService.find(email);
 
     if (userAlreadyExists) {
-      return reply
-        .code(200)
-        .send({
-          message: "User already exists",
-          user: userAlreadyExists.props,
-        });
+      return reply.code(200).send({
+        message: "User already exists",
+        user: userAlreadyExists.props,
+      });
     }
 
     const userCreated = await aService.create(name, email, avatarUrl);
@@ -30,22 +28,22 @@ export async function userRoutes(fastify: FastifyInstance) {
   });
 
   fastify.patch<{ Body: UpdateUserDTO; Params: FindUserDTO }>(
-    "/:email",
+    "/:id",
     // { preHandler: isAuthenticated },
     async (req, reply) => {
       const { bio, instruments, roles } = req.body;
-      const email = req.params.email;
+      const { id: userId } = req.params;
 
       const aRepository = UserRepositoryPrisma.build(prisma);
       const aService = UserServiceImplementation.build(aRepository);
 
-      const userExists = await aService.find(email);
+      const userExists = await aService.find(userId);
 
       if (!userExists) {
         return reply.code(400).send({ message: "User does not exist" });
       }
 
-      const { avatarUrl, createdAt, id, name } = userExists;
+      const { avatarUrl, createdAt, id, name, email } = userExists;
       const userToUpdate = User.with({
         bio,
         instruments,
@@ -64,15 +62,15 @@ export async function userRoutes(fastify: FastifyInstance) {
   );
 
   fastify.get<{ Params: FindUserDTO }>(
-    "/:email",
+    "/:id",
     // { preHandler: isAuthenticated },
     async (req, reply) => {
-      const { email } = req.params;
+      const { id } = req.params;
 
       const aRepository = UserRepositoryPrisma.build(prisma);
       const aService = UserServiceImplementation.build(aRepository);
 
-      const result = await aService.find(email);
+      const result = await aService.find(id);
 
       if (!result) {
         return reply.status(404).send({ message: "User does not exist." });

@@ -11,5 +11,5 @@ export type UpdateUserDTO = {
 };
 
 export type FindUserDTO = {
-  email: string;
+  id: string;
 };
