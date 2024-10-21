@@ -1,6 +1,10 @@
 import { FastifyInstance } from "fastify";
 import { prisma } from "../../../database/prisma";
-import { CreateFavoriteDTO, DeleteFavoriteDTO } from "./favorite.routes.dto";
+import {
+  CreateFavoriteDTO,
+  DeleteFavoriteDTO,
+  GetFavoriteByUserIdDTO,
+} from "./favorite.routes.dto";
 import { FavoriteRepositoryPrisma } from "../../../repositories/favorite/prisma/favorite.repository.prisma";
 import { FavoriteServiceImplementation } from "../../../services/favorite/favorite.service.implementation";
 
@@ -15,6 +19,20 @@ export async function favoriteRoutes(fastify: FastifyInstance) {
 
     return reply.status(201).send({ favorite: result?.props });
   });
+
+  fastify.get<{ Querystring: GetFavoriteByUserIdDTO }>(
+    "/",
+    async (req, reply) => {
+      const { userId } = req.query;
+
+      const aRepository = FavoriteRepositoryPrisma.build(prisma);
+      const aService = FavoriteServiceImplementation.build(aRepository);
+
+      const { favorites } = await aService.findByUser(userId);
+
+      return reply.status(200).send({ favorites });
+    }
+  );
 
   fastify.delete<{ Querystring: DeleteFavoriteDTO }>(
     "/",

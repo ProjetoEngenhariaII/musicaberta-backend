@@ -3,7 +3,9 @@ export type CreateFavoriteDTO = {
   sheetId: string;
 };
 
-export type GetFavoriteByUserIdDTO = {};
+export type GetFavoriteByUserIdDTO = {
+  userId: string;
+};
 export type DeleteFavoriteDTO = {
   id: string;
 };

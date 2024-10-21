@@ -1,6 +1,7 @@
 import { Favorite } from "../../entities/favorite.entity";
 import { Sheet } from "../../entities/sheet.entity";
 import { FavoriteRepository } from "../../repositories/favorite/favorite.repository";
+import { findByUserReturn } from "../../types/favorite";
 import { FavoriteService } from "./favorite.service";
 
 export class FavoriteServiceImplementation implements FavoriteService {
@@ -16,8 +17,21 @@ export class FavoriteServiceImplementation implements FavoriteService {
     return result;
   }
 
-  findByUser(userId: string): Promise<Sheet[]> {
-    throw new Error("Method not implemented.");
+  async findByUser(userId: string): Promise<findByUserReturn> {
+    const result = await this.repository.findByUser(userId);
+
+    const favorites = result.favorites.map((favorite) => {
+      const sheet = Sheet.with({ ...favorite.sheet });
+
+      return {
+        favoriteId: favorite.id,
+        sheet: sheet.props,
+      };
+    });
+
+    return {
+      favorites,
+    };
   }
 
   async delete(favoriteId: string): Promise<void> {

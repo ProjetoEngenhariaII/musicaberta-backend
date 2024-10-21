@@ -2,6 +2,10 @@ import { PrismaClient } from "@prisma/client";
 import { FavoriteRepository } from "../favorite.repository";
 import { Favorite } from "../../../entities/favorite.entity";
 import { Sheet } from "../../../entities/sheet.entity";
+import {
+  findByUserPrismaReturn,
+  findByUserReturn,
+} from "../../../types/favorite";
 
 export class FavoriteRepositoryPrisma implements FavoriteRepository {
   private constructor(readonly prisma: PrismaClient) {}
@@ -24,8 +28,20 @@ export class FavoriteRepositoryPrisma implements FavoriteRepository {
     return null;
   }
 
-  findByUser(userId: string): Promise<{ sheets: Sheet[]; favoriteId: string }> {
-    throw new Error("Method not implemented.");
+  async findByUser(userId: string): Promise<findByUserPrismaReturn> {
+    const result = await this.prisma.favorite.findMany({
+      where: {
+        userId,
+      },
+      select: {
+        id: true,
+        sheet: true,
+      },
+    });
+
+    return {
+      favorites: result,
+    };
   }
 
   async delete(favoriteId: string): Promise<void> {

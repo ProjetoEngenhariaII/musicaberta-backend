@@ -1,8 +1,8 @@
 import { Favorite } from "../../entities/favorite.entity";
-import { Sheet } from "../../entities/sheet.entity";
+import { findByUserPrismaReturn } from "../../types/favorite";
 
 export interface FavoriteRepository {
   save(userId: string, sheetId: string): Promise<Favorite | null>;
-  findByUser(userId: string): Promise<{ sheets: Sheet[]; favoriteId: string }>;
+  findByUser(userId: string): Promise<findByUserPrismaReturn>;
   delete(favoriteId: string): Promise<void>;
 }
