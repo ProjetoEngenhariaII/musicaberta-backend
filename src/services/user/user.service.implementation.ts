@@ -34,4 +34,9 @@ export class UserServiceImplementation implements UserService {
 
     return aUser;
   }
+  async findByEmail(email: string): Promise<User | null> {
+    const aUser = await this.repository.findByEmail(email);
+
+    return aUser;
+  }
 }

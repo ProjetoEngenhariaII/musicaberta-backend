@@ -13,7 +13,7 @@ export async function userRoutes(fastify: FastifyInstance) {
     const aRepository = UserRepositoryPrisma.build(prisma);
     const aService = UserServiceImplementation.build(aRepository);
 
-    const userAlreadyExists = await aService.find(email);
+    const userAlreadyExists = await aService.findByEmail(email);
 
     if (userAlreadyExists) {
       return reply.code(200).send({

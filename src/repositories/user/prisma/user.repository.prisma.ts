@@ -60,4 +60,16 @@ export class UserRepositoryPrisma implements UserRepository {
 
     return user;
   }
+
+  async findByEmail(email: string): Promise<User | null> {
+    const user = await this.prisma.user.findFirst({ where: { email } });
+
+    if (user) {
+      return User.with({
+        ...user,
+      });
+    }
+
+    return user;
+  }
 }
