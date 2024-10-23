@@ -31,8 +31,6 @@ export async function sheetRoutes(fastify: FastifyInstance) {
 
     const sheetCreated = await aService.create(aSheet);
 
-    console.log(sheetCreated);
-
     return reply.status(201).send({ sheet: sheetCreated?.props });
   });
 
