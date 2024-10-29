@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient, Sheet as SheetPrisma } from "@prisma/client";
 import { SheetRepository } from "../sheet.repository";
 import { Sheet } from "../../../entities/sheet.entity";
 
@@ -9,7 +9,7 @@ export class SheetRepositoryPrisma implements SheetRepository {
     return new SheetRepositoryPrisma(prisma);
   }
 
-  async save(sheet: Sheet): Promise<Sheet | null> {
+  async save(sheet: Sheet): Promise<SheetPrisma | null> {
     const { badges, mp3Url, pdfUrl, songWriter, userId, title } = sheet.props;
 
     const result = await this.prisma.sheet.create({
@@ -23,13 +23,7 @@ export class SheetRepositoryPrisma implements SheetRepository {
       },
     });
 
-    if (result) {
-      return Sheet.with({
-        ...result,
-      });
-    }
-
-    return null;
+    return result;
   }
 
   async delete(sheetId: string): Promise<void> {
@@ -45,7 +39,7 @@ export class SheetRepositoryPrisma implements SheetRepository {
     sort: "asc" | "desc",
     skip: number,
     perPage: number
-  ): Promise<{ sheets: Sheet[]; total: number }> {
+  ): Promise<{ sheets: SheetPrisma[]; total: number }> {
     const where: Prisma.SheetWhereInput = {
       OR: [
         {
@@ -77,12 +71,10 @@ export class SheetRepositoryPrisma implements SheetRepository {
       ],
     });
 
-    const sheets = result.map((sheet) => Sheet.with(sheet));
-
-    return { sheets, total };
+    return { sheets: result, total };
   }
 
-  async findByUser(userId: string): Promise<Sheet[]> {
+  async findByUser(userId: string): Promise<SheetPrisma[]> {
     const result = await this.prisma.sheet.findMany({
       where: {
         userId,
@@ -92,8 +84,6 @@ export class SheetRepositoryPrisma implements SheetRepository {
       },
     });
 
-    const sheets = result.map((sheet) => Sheet.with(sheet));
-
-    return sheets;
+    return result;
   }
 }

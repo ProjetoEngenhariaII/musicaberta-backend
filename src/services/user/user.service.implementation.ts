@@ -18,7 +18,13 @@ export class UserServiceImplementation implements UserService {
 
     const result = await this.repository.save(aUser);
 
-    return result;
+    if (result) {
+      return User.with({
+        ...result,
+      });
+    }
+
+    return null;
   }
 
   async update(user: User): Promise<User | null> {
@@ -26,16 +32,34 @@ export class UserServiceImplementation implements UserService {
 
     const result = await this.repository.update(aUser);
 
-    return result;
+    if (result) {
+      return User.with({
+        ...result,
+      });
+    }
+
+    return null;
   }
 
   async find(id: string): Promise<User | null> {
     const aUser = await this.repository.find(id);
 
+    if (aUser) {
+      return User.with({
+        ...aUser,
+      });
+    }
+
     return aUser;
   }
   async findByEmail(email: string): Promise<User | null> {
     const aUser = await this.repository.findByEmail(email);
+
+    if (aUser) {
+      return User.with({
+        ...aUser,
+      });
+    }
 
     return aUser;
   }

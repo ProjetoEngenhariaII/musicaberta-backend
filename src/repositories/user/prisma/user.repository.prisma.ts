@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, User as UserPrisma } from "@prisma/client";
 import { UserRepository } from "../user.repository";
 import { User } from "../../../entities/user.entity";
 
@@ -9,7 +9,7 @@ export class UserRepositoryPrisma implements UserRepository {
     return new UserRepositoryPrisma(prisma);
   }
 
-  async save(user: User): Promise<User | null> {
+  async save(user: User): Promise<UserPrisma | null> {
     const result = await this.prisma.user.create({
       data: {
         name: user.name,
@@ -19,16 +19,10 @@ export class UserRepositoryPrisma implements UserRepository {
       },
     });
 
-    if (result) {
-      return User.with({
-        ...result,
-      });
-    }
-
-    return null;
+    return result;
   }
 
-  async update(user: User): Promise<User | null> {
+  async update(user: User): Promise<UserPrisma | null> {
     const result = await this.prisma.user.update({
       data: {
         roles: user.roles,
@@ -40,35 +34,17 @@ export class UserRepositoryPrisma implements UserRepository {
       },
     });
 
-    if (result) {
-      return User.with({
-        ...result,
-      });
-    }
-
-    return null;
+    return result;
   }
 
-  async find(id: string): Promise<User | null> {
+  async find(id: string): Promise<UserPrisma | null> {
     const user = await this.prisma.user.findFirst({ where: { id } });
-
-    if (user) {
-      return User.with({
-        ...user,
-      });
-    }
 
     return user;
   }
 
-  async findByEmail(email: string): Promise<User | null> {
+  async findByEmail(email: string): Promise<UserPrisma | null> {
     const user = await this.prisma.user.findFirst({ where: { email } });
-
-    if (user) {
-      return User.with({
-        ...user,
-      });
-    }
 
     return user;
   }

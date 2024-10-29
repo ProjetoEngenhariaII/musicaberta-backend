@@ -1,8 +1,8 @@
 import { Favorite } from "../../entities/favorite.entity";
-import { findByUserReturn } from "../../types/favorite";
+import { FindByUserReturn } from "../../types/favorite";
 
 export interface FavoriteService {
   create(userId: string, sheetId: string): Promise<Favorite | null>;
-  findByUser(userId: string): Promise<findByUserReturn>;
+  findByUser(userId: string): Promise<FindByUserReturn>;
   delete(favoriteId: string): Promise<void>;
 }

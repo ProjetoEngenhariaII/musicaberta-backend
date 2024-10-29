@@ -23,7 +23,13 @@ export class SheetServiceImplementation implements SheetService {
 
     const result = await this.repository.save(aSheet);
 
-    return result;
+    if (result) {
+      return Sheet.with({
+        ...result,
+      });
+    }
+
+    return null;
   }
 
   async delete(sheetId: string): Promise<void> {
@@ -43,12 +49,15 @@ export class SheetServiceImplementation implements SheetService {
       perPage
     );
 
-    return { sheets, total };
+    const sheetsFormatted = sheets.map((sheet) => Sheet.with(sheet));
+
+    return { sheets: sheetsFormatted, total };
   }
 
   async findByUser(userId: string): Promise<Sheet[]> {
     const sheets = await this.repository.findByUser(userId);
+    const sheetsFormatted = sheets.map((sheet) => Sheet.with(sheet));
 
-    return sheets;
+    return sheetsFormatted;
   }
 }

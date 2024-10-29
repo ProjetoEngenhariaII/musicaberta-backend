@@ -1,11 +1,6 @@
-import { PrismaClient } from "@prisma/client";
+import { Favorite as FavoritePrisma, PrismaClient } from "@prisma/client";
 import { FavoriteRepository } from "../favorite.repository";
-import { Favorite } from "../../../entities/favorite.entity";
-import { Sheet } from "../../../entities/sheet.entity";
-import {
-  findByUserPrismaReturn,
-  findByUserReturn,
-} from "../../../types/favorite";
+import { FindByUserPrismaReturn } from "../../../types/favorite";
 
 export class FavoriteRepositoryPrisma implements FavoriteRepository {
   private constructor(readonly prisma: PrismaClient) {}
@@ -13,7 +8,7 @@ export class FavoriteRepositoryPrisma implements FavoriteRepository {
     return new FavoriteRepositoryPrisma(prisma);
   }
 
-  async save(userId: string, sheetId: string): Promise<Favorite | null> {
+  async save(userId: string, sheetId: string): Promise<FavoritePrisma | null> {
     const result = await this.prisma.favorite.create({
       data: {
         sheetId,
@@ -21,14 +16,10 @@ export class FavoriteRepositoryPrisma implements FavoriteRepository {
       },
     });
 
-    if (result) {
-      return Favorite.with({ ...result });
-    }
-
-    return null;
+    return result;
   }
 
-  async findByUser(userId: string): Promise<findByUserPrismaReturn> {
+  async findByUser(userId: string): Promise<FindByUserPrismaReturn> {
     const result = await this.prisma.favorite.findMany({
       where: {
         userId,
