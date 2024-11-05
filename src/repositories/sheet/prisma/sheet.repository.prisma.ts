@@ -40,23 +40,31 @@ export class SheetRepositoryPrisma implements SheetRepository {
     skip: number,
     perPage: number
   ): Promise<{ sheets: SheetPrisma[]; total: number }> {
-    const where: Prisma.SheetWhereInput = {
-      OR: [
-        {
-          title: {
-            contains: search || "",
-            mode: "insensitive",
-          },
-        },
+    const where: Prisma.SheetWhereInput = search
+      ? {
+          OR: [
+            {
+              title: {
+                contains: search || "",
+                mode: "insensitive",
+              },
+            },
 
-        {
-          songWriter: {
-            contains: search || "",
-            mode: "insensitive",
-          },
-        },
-      ],
-    };
+            {
+              songWriter: {
+                contains: search || "",
+                mode: "insensitive",
+              },
+            },
+
+            {
+              badges: {
+                hasSome: [search],
+              },
+            },
+          ],
+        }
+      : {};
 
     const total = await this.prisma.sheet.count({ where });
 
