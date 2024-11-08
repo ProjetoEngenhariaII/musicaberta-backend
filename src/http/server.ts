@@ -1,7 +1,34 @@
 import fastify from "fastify";
+import cors from "@fastify/cors";
+
+import { userRoutes } from "./routes/user/user.routes";
+import { sheetRoutes } from "./routes/sheet/sheet.routes";
+import { favoriteRoutes } from "./routes/favorite/favorite.routes";
+// import { authRoutes } from "./routes/auth/auth.routes";
+// import { isAuthenticated } from "./routes/auth/isAuthenticated";
 
 const app = fastify({
-  logger: true,
+  // logger: true,
+});
+
+app.register(cors, {});
+
+app.register(require("@fastify/multipart"));
+
+// app.register(authRoutes, {
+//   prefix: "/auth",
+// });
+
+app.register(userRoutes, {
+  prefix: "/users",
+});
+
+app.register(sheetRoutes, {
+  prefix: "/sheets",
+});
+
+app.register(favoriteRoutes, {
+  prefix: "/favorites",
 });
 
 app.get("/", () => {

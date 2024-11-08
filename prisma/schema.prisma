@@ -13,6 +13,46 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id          String     @id @default(cuid())
+  name        String
+  email       String     @unique
+  createdAt   DateTime   @default(now())
+  bio         String
+  roles       String[]
+  instruments String[]
+  avatarUrl   String
+  Sheet       Sheet[]
+  Favorite    Favorite[]
+
+  @@map("users")
+}
+
 model Sheet {
-  id String @id @default(cuid())
+  id         String     @id @default(cuid())
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  title      String
+  songWriter String
+  pdfUrl     String
+  mp3Url     String
+  badges     String[]
+  userId     String
+  user       User       @relation(fields: [userId], references: [id])
+  Favorite   Favorite[]
+
+  @@map("sheets")
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  userId  String
+  sheetId String
+  user    User   @relation(fields: [userId], references: [id])
+  sheet   Sheet  @relation(fields: [sheetId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, sheetId])
+  @@map("favorites")
 }
