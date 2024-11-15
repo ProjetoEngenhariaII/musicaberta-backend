@@ -9,7 +9,8 @@ export type CreateSheetDTO = {
 
 export type DeleteSheetDTO = {
   id: string;
-  key: string;
+  pdfName: string;
+  mp3Name: string | undefined;
 };
 
 export type GetSheetByUserIdDTO = {

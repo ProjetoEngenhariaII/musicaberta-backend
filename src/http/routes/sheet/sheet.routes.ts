@@ -110,19 +110,28 @@ export async function sheetRoutes(fastify: FastifyInstance) {
   );
 
   fastify.delete<{ Querystring: DeleteSheetDTO }>("/", async (req, reply) => {
-    const { id, key } = req.query;
+    const { id, mp3Name, pdfName } = req.query;
 
     const aRepository = SheetRepositoryPrisma.build(prisma);
     const aService = SheetServiceImplementation.build(aRepository);
 
     await aService.delete(id);
 
-    const deleteObjectCommand = new DeleteObjectCommand({
+    const deletePdfObjectCommand = new DeleteObjectCommand({
       Bucket: "sheets",
-      Key: key,
+      Key: pdfName,
     });
 
-    await clientS3.send(deleteObjectCommand);
+    await clientS3.send(deletePdfObjectCommand);
+
+    if (mp3Name) {
+      const deleteMp3ObjectCommand = new DeleteObjectCommand({
+        Bucket: "sheets",
+        Key: mp3Name,
+      });
+
+      await clientS3.send(deleteMp3ObjectCommand);
+    }
 
     return reply.status(200).send({ message: "sheet deleted" });
   });
