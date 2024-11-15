@@ -13,7 +13,11 @@ const app = fastify({
 
 app.register(cors, {});
 
-app.register(require("@fastify/multipart"));
+app.register(require("@fastify/multipart"), {
+  limits: {
+    fileSize: 5000000,
+  },
+});
 
 // app.register(authRoutes, {
 //   prefix: "/auth",
