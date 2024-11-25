@@ -36,7 +36,7 @@ export class SheetRepositoryPrisma implements SheetRepository {
 
   async findAll(
     search: string | undefined,
-    sort: "asc" | "desc",
+    sort: "asc" | "desc" | "mostFavorited",
     skip: number,
     perPage: number
   ): Promise<{ sheets: SheetPrisma[]; total: number }> {
@@ -67,6 +67,21 @@ export class SheetRepositoryPrisma implements SheetRepository {
       : {};
 
     const total = await this.prisma.sheet.count({ where });
+
+    if (sort === "mostFavorited") {
+      const result = await this.prisma.sheet.findMany({
+        skip,
+        take: perPage,
+        where,
+        orderBy: {
+          Favorite: {
+            _count: "desc",
+          },
+        },
+      });
+
+      return { sheets: result, total };
+    }
 
     const result = await this.prisma.sheet.findMany({
       skip,

@@ -5,7 +5,7 @@ export interface SheetService {
   delete(sheetId: string): Promise<void>;
   findAll(
     search: string | undefined,
-    sort: "asc" | "desc",
+    sort: "asc" | "desc" | "mostFavorited",
     skip: number,
     perPage: number
   ): Promise<{ sheets: Sheet[]; total: number }>;

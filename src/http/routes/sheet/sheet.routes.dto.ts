@@ -19,6 +19,6 @@ export type GetSheetByUserIdDTO = {
 
 export type GetSheetsQueryDTO = {
   search: string | undefined;
-  sort: "asc" | "desc" | undefined;
+  sort: "asc" | "desc" | "mostFavorited" | undefined;
   page: number;
 };
