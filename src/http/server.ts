@@ -4,6 +4,7 @@ import cors from "@fastify/cors";
 import { userRoutes } from "./routes/user/user.routes";
 import { sheetRoutes } from "./routes/sheet/sheet.routes";
 import { favoriteRoutes } from "./routes/favorite/favorite.routes";
+import { requestRoutes } from "./routes/request/request.routes";
 // import { authRoutes } from "./routes/auth/auth.routes";
 // import { isAuthenticated } from "./routes/auth/isAuthenticated";
 
@@ -33,6 +34,10 @@ app.register(sheetRoutes, {
 
 app.register(favoriteRoutes, {
   prefix: "/favorites",
+});
+
+app.register(requestRoutes, {
+  prefix: "/requests",
 });
 
 app.get("/", () => {
