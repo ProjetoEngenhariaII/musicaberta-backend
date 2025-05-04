@@ -1,5 +1,4 @@
 import { Request } from "../../entities/request.entity";
-import { Request as RequestPrisma } from "@prisma/client";
 import { RequestRepository } from "../../repositories/request/request.repository";
 import { RequestService } from "./request.service";
 
@@ -22,5 +21,23 @@ export class RequestServiceImplementation implements RequestService {
     }
 
     return null;
+  }
+
+  async findByUser(userId: string): Promise<Request[] | null> {
+    const result = await this.repository.findByUser(userId);
+    if (!result) return null;
+
+    return result.map((request) =>
+      Request.with({
+        id: request.id,
+        createdAt: request.createdAt,
+        updatedAt: request.updatedAt,
+        title: request.title,
+        description: request.description,
+        badges: request.badges,
+        status: request.status,
+        userId: request.userId,
+      })
+    );
   }
 }

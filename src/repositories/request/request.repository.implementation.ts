@@ -24,4 +24,14 @@ export class RequestRepositoryImplementation implements RequestRepository {
 
     return result;
   }
+
+  async findByUser(userId: string): Promise<RequestPrisma[] | null> {
+    const result = await this.prisma.request.findMany({
+      where: {
+        userId,
+      },
+    });
+
+    return result;
+  }
 }
