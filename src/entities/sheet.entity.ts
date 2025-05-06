@@ -8,6 +8,7 @@ export type SheetProps = {
   mp3Url: string;
   badges: string[];
   userId: string;
+  requestId: string | null;
 };
 
 export class Sheet {
@@ -19,7 +20,8 @@ export class Sheet {
     pdfUrl: string,
     mp3Url: string,
     badges: string[],
-    userId: string
+    userId: string,
+    requestId: string | null = null
   ) {
     return new Sheet({
       id: undefined,
@@ -31,6 +33,7 @@ export class Sheet {
       mp3Url,
       badges,
       userId,
+      requestId,
     });
   }
 
@@ -74,5 +77,9 @@ export class Sheet {
 
   public get userId(): string {
     return this.props.userId;
+  }
+
+  public get requestId(): string | null {
+    return this.props.requestId;
   }
 }

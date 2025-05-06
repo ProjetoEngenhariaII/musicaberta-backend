@@ -10,7 +10,8 @@ export class SheetRepositoryPrisma implements SheetRepository {
   }
 
   async save(sheet: Sheet): Promise<SheetPrisma | null> {
-    const { badges, mp3Url, pdfUrl, songWriter, userId, title } = sheet.props;
+    const { badges, mp3Url, pdfUrl, songWriter, userId, title, requestId } =
+      sheet.props;
 
     const result = await this.prisma.sheet.create({
       data: {
@@ -20,6 +21,7 @@ export class SheetRepositoryPrisma implements SheetRepository {
         title,
         badges,
         userId,
+        requestId,
       },
     });
 

@@ -8,7 +8,6 @@ import { prisma } from "../../../database/prisma";
 import { RequestRepositoryImplementation } from "../../../repositories/request/prisma/request.repository.implementation";
 import { RequestServiceImplementation } from "../../../services/request/request.service.implementation";
 import { Request } from "../../../entities/request.entity";
-import { Sheet } from "../../../entities/sheet.entity";
 
 export async function requestRoutes(fastify: FastifyInstance) {
   fastify.post<{ Body: CreateRequestDTO }>("/", async (req, reply) => {

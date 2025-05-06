@@ -5,6 +5,7 @@ export type CreateSheetDTO = {
   mp3Url: string;
   badges: string[];
   userId: string;
+  requestId?: string | null;
 };
 
 export type DeleteSheetDTO = {

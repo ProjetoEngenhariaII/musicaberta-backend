@@ -10,7 +10,8 @@ export class SheetServiceImplementation implements SheetService {
   }
 
   async create(sheet: Sheet): Promise<Sheet | null> {
-    const { badges, mp3Url, pdfUrl, songWriter, userId, title } = sheet.props;
+    const { badges, mp3Url, pdfUrl, songWriter, userId, title, requestId } =
+      sheet.props;
 
     const aSheet = Sheet.build(
       title,
@@ -18,7 +19,8 @@ export class SheetServiceImplementation implements SheetService {
       pdfUrl,
       mp3Url,
       badges,
-      userId
+      userId,
+      requestId
     );
 
     const result = await this.repository.save(aSheet);

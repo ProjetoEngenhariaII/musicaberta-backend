@@ -15,7 +15,8 @@ import { randomUUID } from "crypto";
 
 export async function sheetRoutes(fastify: FastifyInstance) {
   fastify.post<{ Body: CreateSheetDTO }>("/", async (req, reply) => {
-    const { badges, mp3Url, pdfUrl, songWriter, title, userId } = req.body;
+    const { badges, mp3Url, pdfUrl, songWriter, title, userId, requestId } =
+      req.body;
 
     const aRepository = SheetRepositoryPrisma.build(prisma);
     const aService = SheetServiceImplementation.build(aRepository);
@@ -26,7 +27,8 @@ export async function sheetRoutes(fastify: FastifyInstance) {
       pdfUrl,
       mp3Url,
       badges,
-      userId
+      userId,
+      requestId
     );
 
     const sheetCreated = await aService.create(aSheet);
