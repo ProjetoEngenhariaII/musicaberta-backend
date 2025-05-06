@@ -1,6 +1,6 @@
 import { Request } from "../../entities/request.entity";
-import { Request as RequestPrisma } from "@prisma/client";
 import { RequestRepository } from "../../repositories/request/request.repository";
+import { RequestWithSheets, RequestWithUser } from "../../types/request";
 import { RequestService } from "./request.service";
 
 export class RequestServiceImplementation implements RequestService {
@@ -22,5 +22,33 @@ export class RequestServiceImplementation implements RequestService {
     }
 
     return null;
+  }
+
+  async findAll(): Promise<RequestWithUser[] | null> {
+    const result = await this.repository.findAll();
+
+    if (!result) return null;
+
+    return result.requests;
+  }
+
+  async findByUser(userId: string): Promise<Request[] | null> {
+    const result = await this.repository.findByUser(userId);
+
+    if (!result) return null;
+
+    return result.map((request) =>
+      Request.with({
+        ...request,
+      })
+    );
+  }
+
+  async findById(requestId: string): Promise<RequestWithSheets | null> {
+    const result = await this.repository.findById(requestId);
+
+    if (!result) return null;
+
+    return result;
   }
 }

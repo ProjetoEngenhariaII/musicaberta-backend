@@ -4,3 +4,11 @@ export type CreateRequestDTO = {
   badges: string;
   userId: string;
 };
+
+export type GetRequestByUserIdDTO = {
+  userId: string;
+};
+
+export type GetRequestByIdDTO = {
+  requestId: string;
+};
