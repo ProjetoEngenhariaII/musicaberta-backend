@@ -8,3 +8,7 @@ export type CreateRequestDTO = {
 export type GetRequestByUserIdDTO = {
   userId: string;
 };
+
+export type GetRequestByIdDTO = {
+  requestId: string;
+};
