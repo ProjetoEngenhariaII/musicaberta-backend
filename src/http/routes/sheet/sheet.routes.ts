@@ -90,7 +90,7 @@ export async function sheetRoutes(fastify: FastifyInstance) {
 
     await clientS3.send(putObjectCommand);
 
-    const fileURL = `https://qzlpaffxclrcwakxchow.supabase.co/storage/v1/object/public/sheets/${filename}`;
+    const fileURL = `http://127.0.0.1:54321/storage/v1/object/public/sheets/${filename}`;
 
     return reply.status(200).send({ fileURL, message: "Upload succeeded" });
   });
