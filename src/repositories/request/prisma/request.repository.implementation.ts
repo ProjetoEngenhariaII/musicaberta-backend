@@ -35,6 +35,7 @@ export class RequestRepositoryImplementation implements RequestRepository {
       include: {
         user: {
           select: {
+            id: true,
             name: true,
             avatarUrl: true,
           },
@@ -77,6 +78,7 @@ export class RequestRepositoryImplementation implements RequestRepository {
         Sheet: true,
         user: {
           select: {
+            id: true,
             name: true,
             avatarUrl: true,
           },

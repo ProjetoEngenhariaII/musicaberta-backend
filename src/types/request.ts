@@ -3,7 +3,7 @@ import { Sheet } from "../entities/sheet.entity";
 
 export interface RequestWithUser extends RequestPrisma {
   user: {
-    name: string;
+    id: string;
     avatarUrl: string;
   };
   _count: {
