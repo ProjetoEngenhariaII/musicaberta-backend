@@ -1,6 +1,7 @@
 export type UserProps = {
   id: string | undefined;
   createdAt: Date | undefined;
+  password: string;
   name: string;
   email: string;
   bio: string;
@@ -12,13 +13,14 @@ export type UserProps = {
 export class User {
   private constructor(readonly props: UserProps) {}
 
-  public static build(name: string, email: string, avatarUrl: string) {
+  public static build(name: string, email: string, password: string) {
     return new User({
       id: undefined,
       createdAt: undefined,
       name,
       email,
-      avatarUrl,
+      password,
+      avatarUrl: "",
       bio: "",
       instruments: [],
       roles: [],
@@ -45,6 +47,9 @@ export class User {
 
   public get email(): string {
     return this.props.email;
+  }
+  public get password(): string {
+    return this.props.password;
   }
 
   public get bio(): string {
