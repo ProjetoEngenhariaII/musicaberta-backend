@@ -14,7 +14,8 @@ export class UserRepositoryPrisma implements UserRepository {
       data: {
         name: user.name,
         email: user.email,
-        avatarUrl: user.avatarUrl,
+        password: user.password,
+        avatarUrl: "",
         bio: "",
       },
     });
