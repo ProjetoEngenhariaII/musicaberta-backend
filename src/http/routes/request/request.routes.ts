@@ -10,6 +10,15 @@ import { RequestServiceImplementation } from "../../../services/request/request.
 import { Request } from "../../../entities/request.entity";
 
 export async function requestRoutes(fastify: FastifyInstance) {
+  fastify.addHook("onRequest", async (req, reply) => {
+    try {
+      await req.jwtVerify();
+    } catch (error) {
+      console.log(error);
+      return reply.status(401).send({ message: "Unauthorized", error });
+    }
+  });
+
   fastify.post<{ Body: CreateRequestDTO }>("/", async (req, reply) => {
     const { title, description, badges, userId } = req.body;
 
