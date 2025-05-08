@@ -90,8 +90,6 @@ export class SheetRepositoryPrisma implements SheetRepository {
         },
       });
 
-      console.log(result);
-
       return { sheets: result, total };
     }
 
@@ -113,7 +111,6 @@ export class SheetRepositoryPrisma implements SheetRepository {
         },
       ],
     });
-    console.log(result);
 
     return { sheets: result, total };
   }
