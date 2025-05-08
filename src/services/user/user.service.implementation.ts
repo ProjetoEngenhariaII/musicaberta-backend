@@ -15,7 +15,6 @@ export class UserServiceImplementation implements UserService {
     email: string,
     password: string
   ): Promise<User | null> {
-    // hash password
     const hashedPassword = await hashPassword(password);
 
     const aUser = User.build(name, email, hashedPassword);
