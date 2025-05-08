@@ -5,7 +5,6 @@ import {
   FindAllRequestsPrismaReturn,
   RequestWithSheets,
 } from "../../../types/request";
-import { Sheet } from "../../../entities/sheet.entity";
 
 export class RequestRepositoryImplementation implements RequestRepository {
   private constructor(readonly prisma: PrismaClient) {}
@@ -74,7 +73,16 @@ export class RequestRepositoryImplementation implements RequestRepository {
         id: requestId,
       },
       include: {
-        Sheet: true,
+        Sheet: {
+          include: {
+            user: {
+              select: {
+                name: true,
+                avatarUrl: true,
+              },
+            },
+          },
+        },
         user: {
           select: {
             name: true,
@@ -89,11 +97,6 @@ export class RequestRepositoryImplementation implements RequestRepository {
       },
     });
 
-    const sheets = result?.Sheet.map((sheet) => Sheet.with({ ...sheet })) || [];
-
-    return {
-      request: result || null,
-      sheets,
-    };
+    return result || null;
   }
 }

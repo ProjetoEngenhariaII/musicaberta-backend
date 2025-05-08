@@ -75,12 +75,22 @@ export class SheetRepositoryPrisma implements SheetRepository {
         skip,
         take: perPage,
         where,
+        include: {
+          user: {
+            select: {
+              name: true,
+              avatarUrl: true,
+            },
+          },
+        },
         orderBy: {
           Favorite: {
             _count: "desc",
           },
         },
       });
+
+      console.log(result);
 
       return { sheets: result, total };
     }
@@ -89,12 +99,21 @@ export class SheetRepositoryPrisma implements SheetRepository {
       skip,
       take: perPage,
       where,
+      include: {
+        user: {
+          select: {
+            name: true,
+            avatarUrl: true,
+          },
+        },
+      },
       orderBy: [
         {
           createdAt: sort,
         },
       ],
     });
+    console.log(result);
 
     return { sheets: result, total };
   }

@@ -1,9 +1,8 @@
-import { Sheet } from "../entities/sheet.entity";
-import { Sheet as SheetPrisma } from "@prisma/client";
+import { SheetWithUser } from "./sheet";
 
 export type FindByUserReturn = {
-  favorites: { sheet: Omit<Sheet, "props">; favoriteId: string }[];
+  favorites: { sheet: Omit<SheetWithUser, "props">; favoriteId: string }[];
 };
 export type FindByUserPrismaReturn = {
-  favorites: { sheet: SheetPrisma; id: string }[];
+  favorites: { sheet: SheetWithUser; id: string }[];
 };

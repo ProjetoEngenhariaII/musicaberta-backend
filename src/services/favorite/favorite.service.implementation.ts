@@ -25,11 +25,9 @@ export class FavoriteServiceImplementation implements FavoriteService {
     const result = await this.repository.findByUser(userId);
 
     const favorites = result.favorites.map((favorite) => {
-      const sheet = Sheet.with({ ...favorite.sheet });
-
       return {
         favoriteId: favorite.id,
-        sheet: sheet.props,
+        sheet: favorite.sheet,
       };
     });
 

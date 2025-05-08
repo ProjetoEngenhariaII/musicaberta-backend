@@ -1,5 +1,5 @@
-import { Request as RequestPrisma, Sheet as SheetPrisma } from "@prisma/client";
-import { Sheet } from "../entities/sheet.entity";
+import { Request as RequestPrisma } from "@prisma/client";
+import { SheetWithUser } from "./sheet";
 
 export interface RequestWithUser extends RequestPrisma {
   user: {
@@ -11,9 +11,8 @@ export interface RequestWithUser extends RequestPrisma {
   };
 }
 
-export interface RequestWithSheets {
-  request: RequestWithUser | null;
-  sheets: Sheet[];
+export interface RequestWithSheets extends RequestWithUser {
+  Sheet: SheetWithUser[];
 }
 
 export type FindAllRequestsPrismaReturn = {

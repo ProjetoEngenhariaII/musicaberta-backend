@@ -40,10 +40,9 @@ export async function requestRoutes(fastify: FastifyInstance) {
       const aRepository = RequestRepositoryImplementation.build(prisma);
       const aService = RequestServiceImplementation.build(aRepository);
 
-      const result = await aService.findById(requestId);
-      const sheets = result?.sheets.map((sheet) => sheet.props);
+      const request = await aService.findById(requestId);
 
-      return reply.status(200).send({ request: result?.request, sheets });
+      return reply.status(200).send({ request });
     }
   );
   fastify.get<{ Querystring: GetRequestByUserIdDTO }>(

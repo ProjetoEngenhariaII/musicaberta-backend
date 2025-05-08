@@ -26,7 +26,16 @@ export class FavoriteRepositoryPrisma implements FavoriteRepository {
       },
       select: {
         id: true,
-        sheet: true,
+        sheet: {
+          include: {
+            user: {
+              select: {
+                name: true,
+                avatarUrl: true,
+              },
+            },
+          },
+        },
       },
     });
 
