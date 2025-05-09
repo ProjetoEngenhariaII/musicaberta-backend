@@ -8,6 +8,7 @@ export type UpdateUserDTO = {
   roles: string[];
   instruments: string[];
   bio: string;
+  name: string;
 };
 
 export type FindUserDTO = {

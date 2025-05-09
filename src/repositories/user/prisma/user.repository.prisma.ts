@@ -28,6 +28,7 @@ export class UserRepositoryPrisma implements UserRepository {
       data: {
         roles: user.roles,
         instruments: user.instruments,
+        name: user.name,
         bio: user.bio,
         avatarUrl: user.avatarUrl,
       },
