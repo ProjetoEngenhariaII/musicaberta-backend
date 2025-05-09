@@ -66,8 +66,8 @@ export async function userRoutes(fastify: FastifyInstance) {
     return reply.status(201).send({ user: userCreated.props });
   });
 
-  fastify.patch<{ Body: UpdateUserDTO; Params: FindUserDTO }>(
-    "/:id",
+  fastify.post<{ Params: FindUserDTO }>(
+    "/upload-avatar/:id",
     async (req, reply) => {
       try {
         const { id: userId } = req.params;
@@ -75,78 +75,92 @@ export async function userRoutes(fastify: FastifyInstance) {
         const aRepository = UserRepositoryPrisma.build(prisma);
         const aService = UserServiceImplementation.build(aRepository);
 
-        const userExists = await aService.find(userId);
+        const user = await aService.find(userId);
 
-        if (!userExists) {
-          return reply.code(400).send({ message: "Usuário não existe" });
+        if (!user) {
+          return reply.status(404).send({ message: "Usuário não encontrado" });
         }
-
-        let avatarUrl = userExists.avatarUrl;
-        let bio = userExists.bio;
-        let instruments = userExists.instruments;
-        let roles = userExists.roles;
 
         const data = await req.file();
 
-        if (data) {
-          const filename = randomUUID();
+        if (!data || data.fieldname !== "avatar") {
+          return reply
+            .status(400)
+            .send({ message: "Arquivo 'avatar' é obrigatório" });
+        }
 
-          if (userExists.avatarUrl) {
-            const oldFilename = userExists.avatarUrl.split("/").pop();
-            if (oldFilename) {
-              const deleteObjectCommand = new DeleteObjectCommand({
-                Bucket: "avatars",
-                Key: oldFilename,
-              });
+        const filename = randomUUID();
 
-              try {
-                await clientS3.send(deleteObjectCommand);
-              } catch (error) {
-                console.error("Erro ao deletar imagem antiga:", error);
-              }
+        if (user.avatarUrl) {
+          const oldFilename = user.avatarUrl.split("/").pop();
+          if (oldFilename) {
+            try {
+              await clientS3.send(
+                new DeleteObjectCommand({
+                  Bucket: "avatars",
+                  Key: oldFilename,
+                })
+              );
+            } catch (error) {
+              console.error("Erro ao deletar avatar antigo:", error);
             }
-          }
-
-          const putObjectCommand = new PutObjectCommand({
-            Bucket: "avatars",
-            Key: filename,
-            Body: await data.toBuffer(),
-            ContentType: data.mimetype,
-          });
-
-          await clientS3.send(putObjectCommand);
-
-          avatarUrl = `http://127.0.0.1:54321/storage/v1/object/public/avatars/${filename}`;
-
-          const fields = data.fields as Record<string, { value: string }>;
-
-          if (fields.bio?.value) {
-            bio = fields.bio.value;
-          }
-
-          if (fields.instruments?.value) {
-            instruments = JSON.parse(fields.instruments.value);
-          }
-
-          if (fields.roles?.value) {
-            roles = JSON.parse(fields.roles.value);
           }
         }
 
-        const { createdAt, id, name, email, password } = userExists;
-        const userToUpdate = User.with({
-          bio,
-          instruments,
+        const buffer = await data.toBuffer();
+        await clientS3.send(
+          new PutObjectCommand({
+            Bucket: "avatars",
+            Key: filename,
+            Body: buffer,
+            ContentType: data.mimetype,
+          })
+        );
+
+        const avatarUrl = `http://127.0.0.1:54321/storage/v1/object/public/avatars/${filename}`;
+
+        const updatedUser = await aService.update(
+          User.with({
+            ...user.props,
+            avatarUrl,
+          })
+        );
+
+        return reply.status(200).send({ updatedUser: updatedUser?.props });
+      } catch (error) {
+        console.error(error);
+        return reply
+          .status(500)
+          .send({ message: "Erro ao fazer upload do avatar", error });
+      }
+    }
+  );
+
+  fastify.patch<{ Body: UpdateUserDTO; Params: FindUserDTO }>(
+    "/:id",
+    async (req, reply) => {
+      try {
+        const { id: userId } = req.params;
+        const { roles, instruments, bio, name } = req.body;
+
+        const aRepository = UserRepositoryPrisma.build(prisma);
+        const aService = UserServiceImplementation.build(aRepository);
+
+        const userExists = await aService.find(userId);
+
+        if (!userExists) {
+          return reply.status(404).send({ message: "Usuário não existe" });
+        }
+
+        const updatedUser = User.with({
+          ...userExists.props,
           roles,
-          email,
-          password,
-          avatarUrl: avatarUrl,
-          createdAt,
-          id,
+          instruments,
+          bio,
           name,
         });
 
-        const userUpdated = await aService.update(userToUpdate);
+        const userUpdated = await aService.update(updatedUser);
 
         return reply.status(200).send({ user: userUpdated?.props });
       } catch (error) {
