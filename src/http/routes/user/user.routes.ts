@@ -11,6 +11,12 @@ import { UserServiceImplementation } from "../../../services/user/user.service.i
 import { User } from "../../../entities/user.entity";
 import { verifyPassword } from "../../../utils/hash";
 
+interface JwtPayload {
+  id: string;
+  name: string;
+  email: string;
+}
+
 export async function userRoutes(fastify: FastifyInstance) {
   fastify.addHook("onRequest", async (req, reply) => {
     const publicRoutes = [
@@ -109,13 +115,47 @@ export async function userRoutes(fastify: FastifyInstance) {
       return reply.status(400).send({ message: "Invalid password" });
     }
 
+    const { id, name } = userExists;
+
     const token = fastify.jwt.sign({
-      id: userExists.id,
+      id,
+      name,
       email: userExists.email,
     });
 
     return reply.status(200).send({
       token,
     });
+  });
+
+  fastify.get("/me", async (req, reply) => {
+    try {
+      const token = req.headers.authorization?.replace("Bearer ", "");
+
+      if (!token) {
+        return reply.status(401).send({ message: "Token não fornecido" });
+      }
+
+      const decoded = fastify.jwt.decode(token) as JwtPayload;
+
+      if (!decoded) {
+        return reply.status(401).send({ message: "Token inválido" });
+      }
+
+      const userId = decoded.id;
+
+      const aRepository = UserRepositoryPrisma.build(prisma);
+      const aService = UserServiceImplementation.build(aRepository);
+
+      const userExists = await aService.find(userId);
+
+      if (!userExists) {
+        return reply.status(404).send({ message: "Usuário não encontrado" });
+      }
+
+      return reply.status(200).send({ user: userExists.props });
+    } catch (error) {
+      return reply.status(401).send({ message: "Não autorizado", error });
+    }
   });
 }
