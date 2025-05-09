@@ -14,7 +14,8 @@ export class UserRepositoryPrisma implements UserRepository {
       data: {
         name: user.name,
         email: user.email,
-        avatarUrl: user.avatarUrl,
+        password: user.password,
+        avatarUrl: "",
         bio: "",
       },
     });
@@ -27,7 +28,9 @@ export class UserRepositoryPrisma implements UserRepository {
       data: {
         roles: user.roles,
         instruments: user.instruments,
+        name: user.name,
         bio: user.bio,
+        avatarUrl: user.avatarUrl,
       },
       where: {
         email: user.email,

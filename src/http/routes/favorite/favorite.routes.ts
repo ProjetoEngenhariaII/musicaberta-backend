@@ -9,6 +9,15 @@ import { FavoriteRepositoryPrisma } from "../../../repositories/favorite/prisma/
 import { FavoriteServiceImplementation } from "../../../services/favorite/favorite.service.implementation";
 
 export async function favoriteRoutes(fastify: FastifyInstance) {
+  fastify.addHook("onRequest", async (req, reply) => {
+    try {
+      await req.jwtVerify();
+    } catch (error) {
+      console.log(error);
+      return reply.status(401).send({ message: "Unauthorized", error });
+    }
+  });
+
   fastify.post<{ Body: CreateFavoriteDTO }>("/", async (req, reply) => {
     const { userId, sheetId } = req.body;
 

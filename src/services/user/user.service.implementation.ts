@@ -1,5 +1,6 @@
 import { User } from "../../entities/user.entity";
 import { UserRepository } from "../../repositories/user/user.repository";
+import { hashPassword } from "../../utils/hash";
 import { UserService } from "./user.service";
 
 export class UserServiceImplementation implements UserService {
@@ -12,16 +13,16 @@ export class UserServiceImplementation implements UserService {
   async create(
     name: string,
     email: string,
-    avatarUrl: string
+    password: string
   ): Promise<User | null> {
-    const aUser = User.build(name, email, avatarUrl);
+    const hashedPassword = await hashPassword(password);
+
+    const aUser = User.build(name, email, hashedPassword);
 
     const result = await this.repository.save(aUser);
 
     if (result) {
-      return User.with({
-        ...result,
-      });
+      return User.with(result);
     }
 
     return null;

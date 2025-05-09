@@ -1,5 +1,6 @@
 import fastify from "fastify";
 import cors from "@fastify/cors";
+import fastifyJwt from "fastify-jwt";
 
 import { userRoutes } from "./routes/user/user.routes";
 import { sheetRoutes } from "./routes/sheet/sheet.routes";
@@ -38,6 +39,10 @@ app.register(favoriteRoutes, {
 
 app.register(requestRoutes, {
   prefix: "/requests",
+});
+
+app.register(fastifyJwt, {
+  secret: process.env.JWT_SECRET ?? "secret",
 });
 
 app.get("/", () => {

@@ -14,6 +14,15 @@ import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { randomUUID } from "crypto";
 
 export async function sheetRoutes(fastify: FastifyInstance) {
+  fastify.addHook("onRequest", async (req, reply) => {
+    try {
+      await req.jwtVerify();
+    } catch (error) {
+      console.log(error);
+      return reply.status(401).send({ message: "Unauthorized", error });
+    }
+  });
+
   fastify.post<{ Body: CreateSheetDTO }>("/", async (req, reply) => {
     const { badges, mp3Url, pdfUrl, songWriter, title, userId, requestId } =
       req.body;
