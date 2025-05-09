@@ -10,6 +10,9 @@ import { UserRepositoryPrisma } from "../../../repositories/user/prisma/user.rep
 import { UserServiceImplementation } from "../../../services/user/user.service.implementation";
 import { User } from "../../../entities/user.entity";
 import { verifyPassword } from "../../../utils/hash";
+import { clientS3 } from "../../../utils/client.supabase";
+import { PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { randomUUID } from "crypto";
 
 interface JwtPayload {
   id: string;
@@ -66,34 +69,92 @@ export async function userRoutes(fastify: FastifyInstance) {
   fastify.patch<{ Body: UpdateUserDTO; Params: FindUserDTO }>(
     "/:id",
     async (req, reply) => {
-      const { bio, instruments, roles } = req.body;
-      const { id: userId } = req.params;
+      try {
+        const { id: userId } = req.params;
 
-      const aRepository = UserRepositoryPrisma.build(prisma);
-      const aService = UserServiceImplementation.build(aRepository);
+        const aRepository = UserRepositoryPrisma.build(prisma);
+        const aService = UserServiceImplementation.build(aRepository);
 
-      const userExists = await aService.find(userId);
+        const userExists = await aService.find(userId);
 
-      if (!userExists) {
-        return reply.code(400).send({ message: "User does not exist" });
+        if (!userExists) {
+          return reply.code(400).send({ message: "Usuário não existe" });
+        }
+
+        let avatarUrl = userExists.avatarUrl;
+        let bio = userExists.bio;
+        let instruments = userExists.instruments;
+        let roles = userExists.roles;
+
+        const data = await req.file();
+
+        if (data) {
+          const filename = randomUUID();
+
+          if (userExists.avatarUrl) {
+            const oldFilename = userExists.avatarUrl.split("/").pop();
+            if (oldFilename) {
+              const deleteObjectCommand = new DeleteObjectCommand({
+                Bucket: "avatars",
+                Key: oldFilename,
+              });
+
+              try {
+                await clientS3.send(deleteObjectCommand);
+              } catch (error) {
+                console.error("Erro ao deletar imagem antiga:", error);
+              }
+            }
+          }
+
+          const putObjectCommand = new PutObjectCommand({
+            Bucket: "avatars",
+            Key: filename,
+            Body: await data.toBuffer(),
+            ContentType: data.mimetype,
+          });
+
+          await clientS3.send(putObjectCommand);
+
+          avatarUrl = `http://127.0.0.1:54321/storage/v1/object/public/avatars/${filename}`;
+
+          const fields = data.fields as Record<string, { value: string }>;
+
+          if (fields.bio?.value) {
+            bio = fields.bio.value;
+          }
+
+          if (fields.instruments?.value) {
+            instruments = JSON.parse(fields.instruments.value);
+          }
+
+          if (fields.roles?.value) {
+            roles = JSON.parse(fields.roles.value);
+          }
+        }
+
+        const { createdAt, id, name, email, password } = userExists;
+        const userToUpdate = User.with({
+          bio,
+          instruments,
+          roles,
+          email,
+          password,
+          avatarUrl: avatarUrl,
+          createdAt,
+          id,
+          name,
+        });
+
+        const userUpdated = await aService.update(userToUpdate);
+
+        return reply.status(200).send({ user: userUpdated?.props });
+      } catch (error) {
+        console.error(error);
+        return reply
+          .status(500)
+          .send({ message: "Erro ao atualizar usuário", error });
       }
-
-      const { avatarUrl, createdAt, id, name, email, password } = userExists;
-      const userToUpdate = User.with({
-        bio,
-        instruments,
-        roles,
-        email,
-        password,
-        avatarUrl,
-        createdAt,
-        id,
-        name,
-      });
-
-      const userUpdated = await aService.update(userToUpdate);
-
-      return reply.status(200).send({ user: userUpdated?.props });
     }
   );
 
