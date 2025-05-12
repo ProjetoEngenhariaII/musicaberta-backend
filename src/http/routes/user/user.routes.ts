@@ -10,7 +10,7 @@ import { UserRepositoryPrisma } from "../../../repositories/user/prisma/user.rep
 import { UserServiceImplementation } from "../../../services/user/user.service.implementation";
 import { User } from "../../../entities/user.entity";
 import { verifyPassword } from "../../../utils/hash";
-import { clientS3 } from "../../../utils/client.supabase";
+import { clientS3 } from "../../../utils/client.s3";
 import { PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { randomUUID } from "crypto";
 
@@ -117,7 +117,7 @@ export async function userRoutes(fastify: FastifyInstance) {
           })
         );
 
-        const avatarUrl = `http://127.0.0.1:54321/storage/v1/object/public/avatars/${filename}`;
+        const avatarUrl = `http://localhost:9000/avatars/${filename}`;
 
         const updatedUser = await aService.update(
           User.with({

@@ -9,7 +9,7 @@ import { prisma } from "../../../database/prisma";
 import { SheetRepositoryPrisma } from "../../../repositories/sheet/prisma/sheet.repository.prisma";
 import { SheetServiceImplementation } from "../../../services/sheet/sheet.service.implementation";
 import { Sheet } from "../../../entities/sheet.entity";
-import { clientS3 } from "../../../utils/client.supabase";
+import { clientS3 } from "../../../utils/client.s3";
 import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { randomUUID } from "crypto";
 
@@ -99,7 +99,7 @@ export async function sheetRoutes(fastify: FastifyInstance) {
 
     await clientS3.send(putObjectCommand);
 
-    const fileURL = `http://127.0.0.1:54321/storage/v1/object/public/sheets/${filename}`;
+    const fileURL = `http://localhost:9000/sheets/${filename}`;
 
     return reply.status(200).send({ fileURL, message: "Upload succeeded" });
   });
