@@ -120,6 +120,14 @@ export class SheetRepositoryPrisma implements SheetRepository {
       where: {
         userId,
       },
+      include: {
+        user: {
+          select: {
+            name: true,
+            avatarUrl: true,
+          },
+        },
+      },
       orderBy: {
         createdAt: "desc",
       },
