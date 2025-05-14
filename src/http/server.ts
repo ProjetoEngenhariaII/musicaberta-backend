@@ -6,8 +6,6 @@ import { userRoutes } from "./routes/user/user.routes";
 import { sheetRoutes } from "./routes/sheet/sheet.routes";
 import { favoriteRoutes } from "./routes/favorite/favorite.routes";
 import { requestRoutes } from "./routes/request/request.routes";
-// import { authRoutes } from "./routes/auth/auth.routes";
-// import { isAuthenticated } from "./routes/auth/isAuthenticated";
 
 const app = fastify({
   // logger: true,
@@ -20,10 +18,6 @@ app.register(require("@fastify/multipart"), {
     fileSize: 5000000,
   },
 });
-
-// app.register(authRoutes, {
-//   prefix: "/auth",
-// });
 
 app.register(userRoutes, {
   prefix: "/users",
@@ -42,7 +36,7 @@ app.register(requestRoutes, {
 });
 
 app.register(fastifyJwt, {
-  secret: process.env.JWT_SECRET ?? "secret",
+  secret: process.env.JWT_SECRET as string,
 });
 
 app.get("/", () => {
