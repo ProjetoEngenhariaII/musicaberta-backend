@@ -203,6 +203,20 @@ export async function userRoutes(fastify: FastifyInstance) {
     });
   });
 
+  fastify.get<{ Params: FindUserDTO }>("/:id", async (req, reply) => {
+    const { id } = req.params;
+
+    const aRepository = UserRepositoryPrisma.build(prisma);
+    const aService = UserServiceImplementation.build(aRepository);
+
+    const userExists = await aService.find(id);
+    if (!userExists) {
+      return reply.status(404).send({ message: "Usuário não encontrado" });
+    }
+
+    return reply.status(200).send({ user: userExists.props });
+  });
+
   fastify.get("/me", async (req, reply) => {
     try {
       const token = req.headers.authorization?.replace("Bearer ", "");
