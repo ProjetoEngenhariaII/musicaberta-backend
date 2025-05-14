@@ -6,7 +6,7 @@ export type SheetProps = {
   songWriter: string;
   pdfUrl: string;
   mp3Url: string;
-  badges: string[];
+  badges: string;
   userId: string;
   requestId: string | null;
 };
@@ -19,7 +19,7 @@ export class Sheet {
     songWriter: string,
     pdfUrl: string,
     mp3Url: string,
-    badges: string[],
+    badges: string,
     userId: string,
     requestId: string | null = null
   ) {
@@ -71,7 +71,7 @@ export class Sheet {
     return this.props.mp3Url;
   }
 
-  public get badges(): string[] {
+  public get badges(): string {
     return this.props.badges;
   }
 

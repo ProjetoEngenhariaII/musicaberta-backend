@@ -58,10 +58,10 @@ export class SheetRepositoryPrisma implements SheetRepository {
                 mode: "insensitive",
               },
             },
-
             {
               badges: {
-                hasSome: [search],
+                contains: search || "",
+                mode: "insensitive",
               },
             },
           ],

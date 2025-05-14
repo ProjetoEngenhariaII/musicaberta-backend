@@ -35,7 +35,7 @@ model Sheet {
   songWriter String
   pdfUrl     String
   mp3Url     String
-  badges     String[]
+  badges     String
   userId     String
   user       User       @relation(fields: [userId], references: [id])
   Favorite   Favorite[]

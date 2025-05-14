@@ -3,7 +3,7 @@ export type CreateSheetDTO = {
   songWriter: string;
   pdfUrl: string;
   mp3Url: string;
-  badges: string[];
+  badges: string;
   userId: string;
   requestId?: string | null;
 };

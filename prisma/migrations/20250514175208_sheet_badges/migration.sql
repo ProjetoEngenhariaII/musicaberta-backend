@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "sheets" ALTER COLUMN "badges" SET NOT NULL,
+ALTER COLUMN "badges" SET DATA TYPE TEXT;
