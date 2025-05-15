@@ -27,8 +27,6 @@ export async function sheetRoutes(fastify: FastifyInstance) {
     const { badges, mp3Url, pdfUrl, songWriter, title, userId, requestId } =
       req.body;
 
-    console.log({ badges });
-
     const aRepository = SheetRepositoryPrisma.build(prisma);
     const aService = SheetServiceImplementation.build(aRepository);
 
