@@ -12,3 +12,9 @@ export type GetRequestByUserIdDTO = {
 export type GetRequestByIdDTO = {
   requestId: string;
 };
+
+export type GetRequestQueryDTO = {
+  search: string | undefined;
+  sort: "asc" | "desc" | undefined;
+  page: number;
+};

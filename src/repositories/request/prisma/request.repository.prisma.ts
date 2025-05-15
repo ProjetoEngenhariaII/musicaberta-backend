@@ -1,8 +1,8 @@
-import { PrismaClient, Request as RequestPrisma } from "@prisma/client";
+import { Prisma, PrismaClient, Request as RequestPrisma } from "@prisma/client";
 import { Request } from "../../../entities/request.entity";
 import { RequestRepository } from "../request.repository";
 import {
-  FindAllRequestsPrismaReturn,
+  FindAllRequestsReturn,
   RequestWithSheets,
 } from "../../../types/request";
 
@@ -29,8 +29,65 @@ export class RequestRepositoryImplementation implements RequestRepository {
     return result;
   }
 
-  async findAll(): Promise<FindAllRequestsPrismaReturn | null> {
+  async findAll(
+    search: string | undefined,
+    sort: "asc" | "desc" | "mostContributed",
+    skip: number,
+    perPage: number
+  ): Promise<FindAllRequestsReturn | null> {
+    const where: Prisma.RequestWhereInput = search
+      ? {
+          OR: [
+            {
+              title: {
+                contains: search || "",
+                mode: "insensitive",
+              },
+            },
+            {
+              badges: {
+                contains: search || "",
+                mode: "insensitive",
+              },
+            },
+          ],
+        }
+      : {};
+
+    const total = await this.prisma.request.count({ where });
+
+    if (sort === "mostContributed") {
+      const requests = await this.prisma.request.findMany({
+        skip,
+        take: perPage,
+        where,
+        include: {
+          user: {
+            select: {
+              name: true,
+              avatarUrl: true,
+            },
+          },
+          _count: {
+            select: {
+              Sheet: true,
+            },
+          },
+        },
+        orderBy: {
+          Sheet: {
+            _count: "desc",
+          },
+        },
+      });
+
+      return { requests, total };
+    }
+
     const requests = await this.prisma.request.findMany({
+      skip,
+      take: perPage,
+      where,
       include: {
         user: {
           select: {
@@ -51,6 +108,7 @@ export class RequestRepositoryImplementation implements RequestRepository {
 
     return {
       requests,
+      total,
     };
   }
 

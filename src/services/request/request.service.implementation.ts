@@ -1,6 +1,10 @@
 import { Request } from "../../entities/request.entity";
 import { RequestRepository } from "../../repositories/request/request.repository";
-import { RequestWithSheets, RequestWithUser } from "../../types/request";
+import {
+  FindAllRequestsReturn,
+  RequestWithSheets,
+  RequestWithUser,
+} from "../../types/request";
 import { RequestService } from "./request.service";
 
 export class RequestServiceImplementation implements RequestService {
@@ -24,12 +28,17 @@ export class RequestServiceImplementation implements RequestService {
     return null;
   }
 
-  async findAll(): Promise<RequestWithUser[] | null> {
-    const result = await this.repository.findAll();
+  async findAll(
+    search: string | undefined,
+    sort: "asc" | "desc" | "mostContributed",
+    skip: number,
+    perPage: number
+  ): Promise<FindAllRequestsReturn | null> {
+    const result = await this.repository.findAll(search, sort, skip, perPage);
 
     if (!result) return null;
 
-    return result.requests;
+    return result;
   }
 
   async findByUser(userId: string): Promise<Request[] | null> {
