@@ -15,6 +15,6 @@ export type GetRequestByIdDTO = {
 
 export type GetRequestQueryDTO = {
   search: string | undefined;
-  sort: "asc" | "desc" | undefined;
+  sort: "asc" | "desc" | "mostContributed" | undefined;
   page: number;
 };

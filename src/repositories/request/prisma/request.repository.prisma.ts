@@ -102,7 +102,7 @@ export class RequestRepositoryImplementation implements RequestRepository {
         },
       },
       orderBy: {
-        createdAt: "desc",
+        createdAt: sort,
       },
     });
 
