@@ -15,7 +15,7 @@ app.register(cors, {});
 
 app.register(require("@fastify/multipart"), {
   limits: {
-    fileSize: 5000000,
+    fileSize: 10000000, // 10MB
   },
 });
 
