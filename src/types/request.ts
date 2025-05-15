@@ -15,6 +15,7 @@ export interface RequestWithSheets extends RequestWithUser {
   Sheet: SheetWithUser[];
 }
 
-export type FindAllRequestsPrismaReturn = {
+export type FindAllRequestsReturn = {
   requests: RequestWithUser[];
+  total: number;
 };

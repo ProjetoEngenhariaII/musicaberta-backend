@@ -3,9 +3,10 @@ import {
   CreateRequestDTO,
   GetRequestByIdDTO,
   GetRequestByUserIdDTO,
+  GetRequestQueryDTO,
 } from "./request.routes.dto";
 import { prisma } from "../../../database/prisma";
-import { RequestRepositoryImplementation } from "../../../repositories/request/prisma/request.repository.implementation";
+import { RequestRepositoryImplementation } from "../../../repositories/request/prisma/request.repository.prisma";
 import { RequestServiceImplementation } from "../../../services/request/request.service.implementation";
 import { Request } from "../../../entities/request.entity";
 
@@ -32,13 +33,41 @@ export async function requestRoutes(fastify: FastifyInstance) {
     return reply.status(201).send({ request: requestCreated?.props });
   });
 
-  fastify.get("/", async (_, reply) => {
+  fastify.get<{ Querystring: GetRequestQueryDTO }>("/", async (req, reply) => {
+    const { search, sort } = req.query;
+    const page = Number(req.query.page);
+
+    const perPage = 6;
+    const skip = (page - 1) * perPage;
+
     const aRepository = RequestRepositoryImplementation.build(prisma);
     const aService = RequestServiceImplementation.build(aRepository);
 
-    const requests = await aService.findAll();
+    const result = await aService.findAll(
+      search,
+      sort || "desc",
+      skip,
+      perPage
+    );
 
-    return reply.status(200).send({ requests });
+    if (!result) {
+      return reply.status(404).send({ message: "No requests found" });
+    }
+
+    const { requests, total } = result;
+
+    const last = Math.ceil(total / perPage);
+
+    const meta = {
+      current: page,
+      path: "/requests",
+      prev: page > 1 ? page - 1 : null,
+      next: page < last ? page + 1 : null,
+      last,
+      total,
+    };
+
+    return reply.status(200).send({ data: requests, meta });
   });
 
   fastify.get<{ Params: GetRequestByIdDTO }>(
